@@ -10,8 +10,8 @@ struct InlineQueryResultArticle
     message::String
 end
 
-function startBot(botApi=""; textHandle=Dict(), inlineQueryHandle=Dict())
-    !isempty(textHandle) || error("You need to pass repond function as parameter to startBot")
+function startBot(botApi=""; textHandle=Dict(), inlineQueryHandle=Dict(), customHandle=_->nothing)
+    #!isempty(textHandle) || error("You need to pass repond function as parameter to startBot")
     # in case people put in what botfather spits
     botApi = botApi[1:3]=="bot" ? botApi : "bot" * botApi
     # to be used to clear msg que
@@ -55,9 +55,9 @@ function startBot(botApi=""; textHandle=Dict(), inlineQueryHandle=Dict())
                                                reply = "Using the command incorrectly or command is bad")
                     sendText(botApi, reply_id, reply)
                 else
-                    reply_id = string(msg["chat"]["id"])  #encode for GET purpose
-                    no_cmd_prompt= "The command $cmdName is not found" 
-                    sendText(botApi, reply_id, no_cmd_prompt)
+                    #reply_id = string(msg["chat"]["id"])  #encode for GET purpose
+                    #no_cmd_prompt= "The command $cmdName is not found" 
+                    #sendText(botApi, reply_id, no_cmd_prompt)
                     #= @warn backtrace() =#
                 end
             end
@@ -76,6 +76,8 @@ function startBot(botApi=""; textHandle=Dict(), inlineQueryHandle=Dict())
                     answerInlineQuery(botApi, query_id, results)
                 end
             end
+
+            customHandle(rawCmd)
         end
     end
 end
